@@ -2,7 +2,7 @@
 
 usage() {
 	cat << EOF
-git-pb will push the current branch to the origin branch (usually master or main)
+git-push-branch will push the current branch to the origin branch (usually master or main)
 and set upstream tracking for the branch.
 EOF
 exit 1
