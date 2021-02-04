@@ -1,0 +1,41 @@
+#!/bin/bash
+
+usage() {
+	cat << EOF
+git-rm-branch will switch to the main branch, do a git pull, and then prompt
+you to remove the branch you started on.
+EOF
+exit 1
+}
+
+while getopts 'h' c
+do
+  case $c in
+    h) usage ;;
+  esac
+done
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+main=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+
+# Quit if we can't detect a branch
+if [[ "$branch" == "" ]] ; then
+	echo "No branch detected."
+	exit 1
+fi
+
+# Quit if trying to delete protected branches
+if [[ "$branch" == "$main" ]] || [[ "$branch" == "master" ]] || [[ "$branch" == "main" ]]; then
+	echo "Not going to remove the $branch branch."
+	exit 1
+fi
+
+git checkout $main
+git pull
+command="git branch -d $branch"
+read -p "Run '$command'? (y/N) > "
+if [[ "$REPLY" =~ ^[Yy] ]] ; then
+	$command
+else
+	echo "Not deleting branch $branch"
+fi

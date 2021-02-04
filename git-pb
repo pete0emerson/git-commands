@@ -1,0 +1,33 @@
+#!/bin/bash
+
+usage() {
+	cat << EOF
+git-pb will push the current branch to the origin branch (usually master or main)
+and set upstream tracking for the branch.
+EOF
+exit 1
+}
+
+while getopts 'h' c
+do
+  case $c in
+    h) usage ;;
+  esac
+done
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+main=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+
+# Quit if no branch is detected
+if [[ "$branch" == "" ]] ; then
+	echo "No branch detected."
+	exit 1
+fi
+
+# Quit if we're trying to push a protected branch
+if [[ "$branch" == "$main" ]] || [[ "$branch" == "master" ]] || [[ "$branch" == "main" ]]; then
+	echo "Not going to push to the $branch branch."
+	exit 1
+fi
+
+git push -u $main $branch
