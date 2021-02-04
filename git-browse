@@ -2,7 +2,7 @@
 
 usage() {
 	cat << EOF
-git-open will use the remote.origin.url to calculate the website for the current repository
+git-browse will use the remote.origin.url to calculate the website for the current repository
 and open it in a browser
 EOF
 exit 1
